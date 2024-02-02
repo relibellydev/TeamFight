@@ -1,0 +1,10 @@
+TeamFight:
+  Settings:
+    maxPerTeam: 2
+    objective: 10
+  Locations:
+    worldName: world
+    spawn: 0.0:0.0:0.0:0.0:0.0
+    center: 0.0:0.0:0.0:0.0:0.0
+    redSpawn: 0.0:0.0:0.0:0.0:0.0
+    blueSpawn: 0.0:0.0:0.0:0.0:0.0
