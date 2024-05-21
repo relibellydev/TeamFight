@@ -48,4 +48,12 @@ public class GamePlayer {
         for (int i = 2; i < 8; i++)
             this.player.getInventory().setItem(i, (new ItemBuilder(Material.SANDSTONE, 64)).build(true));
     }
+
+    public static void join(Player player) {
+
+    }
+
+    public static void quit(Player player) {
+
+    }
 }

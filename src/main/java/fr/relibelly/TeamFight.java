@@ -1,6 +1,7 @@
 package fr.relibelly;
 
 import fr.relibelly.game.Game;
+import fr.relibelly.manager.Register;
 import fr.relibelly.utils.LocationUtils;
 import lombok.Getter;
 import org.bukkit.Location;
@@ -32,6 +33,7 @@ public final class TeamFight extends JavaPlugin {
         this.center = LocationUtils.str2loc(getConfig().getString("TeamFight.Locations.center"), worldName);
         this.redSpawn = LocationUtils.str2loc(getConfig().getString("TeamFight.Locations.redSpawn"), worldName);
         this.blueSpawn = LocationUtils.str2loc(getConfig().getString("TeamFight.Locations.blueSpawn"), worldName);
+        new Register().registerListener();
 
         this.game = new Game();
 
