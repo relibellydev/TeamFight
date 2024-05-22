@@ -1,9 +1,10 @@
-package fr.relibelly.manager;
+package fr.relibelly.game.listeners.manager;
 
 import fr.relibelly.TeamFight;
-import fr.relibelly.listeners.PlayerConnection;
-import fr.relibelly.listeners.PlayerListener;
-import fr.relibelly.listeners.ServerListener;
+import fr.relibelly.game.listeners.PlayerConnection;
+import fr.relibelly.game.listeners.PlayerDamage;
+import fr.relibelly.game.listeners.PlayerListener;
+import fr.relibelly.game.listeners.ServerListener;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 
@@ -21,5 +22,6 @@ public class Register {
         this.pm.registerEvents(new PlayerConnection(), instance);
         this.pm.registerEvents(new PlayerListener(), instance);
         this.pm.registerEvents(new ServerListener(), instance);
+        this.pm.registerEvents(new PlayerDamage(), instance);
     }
 }

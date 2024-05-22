@@ -1,4 +1,4 @@
-package fr.relibelly.listeners;
+package fr.relibelly.game.listeners;
 
 import org.bukkit.event.Listener;
 

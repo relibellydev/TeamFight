@@ -1,4 +1,4 @@
-package fr.relibelly.listeners;
+package fr.relibelly.game.listeners;
 
 import fr.relibelly.game.player.GamePlayer;
 import org.bukkit.entity.Player;

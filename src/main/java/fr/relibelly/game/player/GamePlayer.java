@@ -1,5 +1,6 @@
 package fr.relibelly.game.player;
 
+import fr.relibelly.game.Game;
 import fr.relibelly.game.teams.Team;
 import fr.relibelly.utils.ItemBuilder;
 import fr.relibelly.utils.PlayerUtils;
@@ -9,7 +10,6 @@ import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
 
 @Getter
 @Setter
@@ -19,7 +19,9 @@ public class GamePlayer {
     private int kills;
     private int deaths;
     private int hits;
+    private int totalHits;
     private Team team;
+    private Game game;
 
     public GamePlayer(Player player) {
         this.player = player;
@@ -33,6 +35,9 @@ public class GamePlayer {
     }
     public void addDeath() {
         this.deaths++;
+    }
+    public void addTotalHits() {
+        this.totalHits++;
     }
 
     public void givePlayingInventory() {
@@ -49,11 +54,17 @@ public class GamePlayer {
             this.player.getInventory().setItem(i, (new ItemBuilder(Material.SANDSTONE, 64)).build(true));
     }
 
-    public static void join(Player player) {
+    public void joinAvaiblableTeam() {
+        if (this.team != null) {
+            setTeam(this.game.getSmallestTeam());
+        }
+    }
 
+    public static void join(Player player) {
+        //TODO
     }
 
     public static void quit(Player player) {
-
+        //TODO
     }
 }

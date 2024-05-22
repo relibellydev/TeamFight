@@ -1,4 +1,4 @@
-package fr.relibelly.listeners;
+package fr.relibelly.game.listeners;
 
 import fr.relibelly.TeamFight;
 import org.bukkit.event.EventHandler;
