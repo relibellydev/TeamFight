@@ -11,12 +11,14 @@ public class PlayerConnection implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
+        event.setJoinMessage(null);
         Player player = event.getPlayer();
         GamePlayer.join(player);
     }
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
+        event.setQuitMessage(null);
         Player player = event.getPlayer();
         GamePlayer.quit(player);
     }

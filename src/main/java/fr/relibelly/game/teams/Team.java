@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 public class Team {
 
     private int points;
+    private int deaths;
     private String name;
     private String colorCode;
     private ChatColor chatColor;
@@ -30,6 +31,7 @@ public class Team {
         this.chatColor = chatColor;
         this.color = color;
         this.points = 0;
+        this.deaths = 0;
     }
 
     public HashMap<UUID, GamePlayer> getPlayers() {
@@ -56,6 +58,10 @@ public class Team {
 
     public void addPoint() {
         this.points++;
+    }
+
+    public void addDeath() {
+        this.deaths++;
     }
 
     public Location getSpawn() {

@@ -18,9 +18,11 @@ public class RoundTask extends BukkitRunnable {
     public RoundTask(Team goalerTeam) {
         this.game = TeamFight.getInstance().getGame();
         this.goalerTeam = goalerTeam;
-        if (goalerTeam != null) {
+        if (goalerTeam == null) {
             timer = 4;
         } else {
+            goalerTeam.addPoint();
+            game.cleanMap();
             timer = 5;
         }
     }
@@ -31,14 +33,14 @@ public class RoundTask extends BukkitRunnable {
         if (goalerTeam != null) {
             if (timer == 4) {
                 for (GamePlayer gamePlayer : game.getPlayers().values()) {
-                    TeamFight.getInstance().getTitle().sendTitle(gamePlayer.getPlayer(), 5, 20, 5, goalerTeam.getColorCode() + "§L+1 " + goalerTeam.getName());
-                    gamePlayer.getPlayer().sendMessage("§7§m--------------------------------------------------------");
-                    gamePlayer.getPlayer().sendMessage("§fLes " + goalerTeam.getFormattedTeamName() + "§font gagné la manche ! §7(" + goalerTeam.getPoints() + "/" + TeamFight.getInstance().getObjective() + ")" + (goalerTeam.getPoints() >= TeamFight.getInstance().getObjective() ? " §6Victoire" : ""));
-                    gamePlayer.getPlayer().sendMessage("§fTu as infligé §b" + gamePlayer.getHits() + " §fdurant cette manche.");
-                    gamePlayer.getPlayer().sendMessage("§7§m--------------------------------------------------------");
-                    gamePlayer.getPlayer().teleport(gamePlayer.getTeam().getSpawn());
-                    gamePlayer.setHits(0);
-                    gamePlayer.givePlayingInventory();
+                    TeamFight.getInstance().getTitle().sendTitle(gamePlayer.getPlayer(), 1, 18, 1, goalerTeam.getColorCode() + "§L+1 " + goalerTeam.getName());
+                    if (!gamePlayer.isSpectator()) {
+                        gamePlayer.getPlayer().sendMessage("§7§m--------------------------------------");
+                        gamePlayer.getPlayer().sendMessage("§fLes " + goalerTeam.getFormattedTeamName() + "§font gagné la manche ! §7(" + goalerTeam.getPoints() + "/" + TeamFight.getInstance().getObjective() + ")");
+                        gamePlayer.getPlayer().sendMessage("§fTu as infligé §b" + gamePlayer.getHits() + " hits §fdurant cette manche.");
+                        gamePlayer.getPlayer().sendMessage("§7§m--------------------------------------");
+                        gamePlayer.setHits(0);
+                    }
                 }
 
                 if (goalerTeam.getPoints() >= TeamFight.getInstance().getObjective()) {
@@ -51,17 +53,25 @@ public class RoundTask extends BukkitRunnable {
 
         if (timer <= 3 && timer >= 1) {
             for (GamePlayer gamePlayer : game.getPlayers().values()) {
-                TeamFight.getInstance().getTitle().sendTitle(gamePlayer.getPlayer(), 5, 20, 5, "", goalerTeam != null ? "§fProchaine manche dans §b" + timer + "s" : "§fDebut de la partie dans §b" + timer + "s");
-                gamePlayer.getPlayer().playSound(gamePlayer.getPlayer().getLocation(), Sound.NOTE_BASS, 1F, 1F);
+                if (!gamePlayer.isSpectator()) {
+                    TeamFight.getInstance().getTitle().sendTitle(gamePlayer.getPlayer(), 5, 20, 5, "", goalerTeam != null ? "§fProchaine manche dans §b" + timer + "s" : "§fDebut de la partie dans §b" + timer + "s");
+                    gamePlayer.getPlayer().playSound(gamePlayer.getPlayer().getLocation(), Sound.NOTE_BASS, 1F, 1F);
+                    gamePlayer.getPlayer().teleport(gamePlayer.getTeam().getSpawn());
+                    if (goalerTeam != null) {
+                        gamePlayer.givePlayingInventory();
+                    }
+                }
             }
         }
 
         if (timer == 0) {
             for (GamePlayer gamePlayer : game.getPlayers().values()) {
-                TeamFight.getInstance().getTitle().sendTitle(gamePlayer.getPlayer(), 10, 40, 10, "§a§lAU COMBAT ! ", "§6Bonne change !");
-                gamePlayer.getPlayer().playSound(gamePlayer.getPlayer().getLocation(), Sound.NOTE_PLING, 1F, 1F);
-                gamePlayer.getPlayer().teleport(gamePlayer.getTeam().getSpawn());
-                gamePlayer.getPlayer().setGameMode(GameMode.SURVIVAL);
+                if (!gamePlayer.isSpectator()) {
+                    TeamFight.getInstance().getTitle().sendTitle(gamePlayer.getPlayer(), 10, 40, 10, "§a§lAU COMBAT ! ", "§6Bonne change !");
+                    gamePlayer.getPlayer().playSound(gamePlayer.getPlayer().getLocation(), Sound.NOTE_PLING, 1F, 1F);
+                    gamePlayer.getPlayer().teleport(gamePlayer.getTeam().getSpawn());
+                    gamePlayer.getPlayer().setGameMode(GameMode.SURVIVAL);
+                }
             }
         }
     }

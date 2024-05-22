@@ -34,8 +34,10 @@ public class GameStartingTask extends BukkitRunnable {
 
         if (timer == 10 || (timer <= 5 && timer >= 1)) {
             for (GamePlayer gamePlayer : game.getPlayers().values()) {
-                TeamFight.getInstance().getTitle().sendTitle(gamePlayer.getPlayer(), 1, 20, 1, "", "Lancement dans §a" + timer + (timer == 1 ? " seconde" : "secondes"));
-                gamePlayer.getPlayer().playSound(gamePlayer.getPlayer().getLocation(), Sound.NOTE_STICKS, 1F, 1F);
+                if (!gamePlayer.isSpectator()) {
+                    TeamFight.getInstance().getTitle().sendTitle(gamePlayer.getPlayer(), 1, 20, 1, "", "Lancement dans §a" + timer + (timer == 1 ? " seconde" : " secondes"));
+                    gamePlayer.getPlayer().playSound(gamePlayer.getPlayer().getLocation(), Sound.NOTE_STICKS, 1F, 1F);
+                }
             }
         }
 

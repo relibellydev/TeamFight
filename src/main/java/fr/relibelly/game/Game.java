@@ -9,10 +9,7 @@ import fr.relibelly.game.teams.Team;
 import fr.relibelly.utils.PlayerUtils;
 import lombok.Getter;
 import lombok.Setter;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Color;
-import org.bukkit.GameMode;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 
 import java.util.*;
@@ -28,6 +25,7 @@ public class Game {
     private Team redTeam;
     private Team blueTeam;
     private Locations locations;
+    private ArrayList<Location> blocks;
 
     public Game() {
         this.gameTypes = GameTypes.WAITING;
@@ -42,6 +40,7 @@ public class Game {
         this.teams.add(this.redTeam);
         this.teams.add(this.blueTeam);
         this.locations = new Locations();
+        this.blocks = new ArrayList<>();
 
     }
 
@@ -58,15 +57,39 @@ public class Game {
         return this.players.values().stream().filter(gp -> gp.getPlayer().getUniqueId().equals(player.getUniqueId())).findFirst().orElse(null);
     }
 
+    public Team getTeamByName(String name) {
+        return this.teams.stream().filter(team -> team.getName().equalsIgnoreCase(name)).findFirst().orElse(null);
+    }
+
+    public void cleanMap() {
+        this.blocks.forEach(location -> location.getBlock().setType(Material.AIR));
+        this.blocks.clear();
+    }
+
+    public void checkPlayers() {
+        for (Team team : getTeams()) {
+            if (team.getPlayers().isEmpty()) {
+                for (Team t : getTeams()) {
+                    if (!t.getPlayers().isEmpty()) {
+                        endGame(t);
+                    }
+                }
+            }
+        }
+    }
+
 
 
     public void startGame() {
         this.gameTypes = GameTypes.PLAYING;
 
         for (GamePlayer gamePlayer : this.players.values()) {
-            gamePlayer.joinAvaiblableTeam();
-            gamePlayer.getPlayer().teleport(gamePlayer.getTeam().getSpawn());
-            gamePlayer.givePlayingInventory();
+            if (!gamePlayer.isSpectator()) {
+                gamePlayer.joinAvaiblableTeam();
+                gamePlayer.setTeamNametag();
+                gamePlayer.getPlayer().teleport(gamePlayer.getTeam().getSpawn());
+                gamePlayer.givePlayingInventory();
+            }
         }
 
         new RoundTask(null).runTaskTimer(TeamFight.getInstance(), 0L, 20L);
@@ -77,30 +100,33 @@ public class Game {
         this.gameTypes = GameTypes.FINISHING;
 
         for (GamePlayer gamePlayer : this.players.values()) {
-            PlayerUtils.cleanPlayer(gamePlayer.getPlayer(), GameMode.ADVENTURE);
-            gamePlayer.getPlayer().setAllowFlight(true);
-            gamePlayer.getPlayer().setFlying(true);
-            TeamFight.getInstance().getTitle().sendTitle(gamePlayer.getPlayer(), 20, 60, 20,
-                    gamePlayer.getTeam().getName().equals(winnerTeam.getName()) ? "§6§lVictoire" : "§cDéfaite", gamePlayer.getTeam().getName().equals(winnerTeam.getName()) ? "§eBien joué !" : "§fVictoire de l'équipe " + winnerTeam.getFormattedTeamName());
-            gamePlayer.getPlayer().sendMessage("§7§m--------------------------------------------------------");
-            gamePlayer.getPlayer().sendMessage("§fL'équipe' " + winnerTeam.getFormattedTeamName() + "§fa gagné la partie !");
-            gamePlayer.getPlayer().sendMessage("§fTu as infligé au total §b" + gamePlayer.getTotalHits() + " §fdurant la partie.");
-            gamePlayer.getPlayer().sendMessage("");
-            List<GamePlayer> bestHitters = new ArrayList<>(this.players.values());
-            bestHitters.sort(Comparator.comparingInt(GamePlayer::getTotalHits).reversed());
-            int i = 1;
-            for (GamePlayer gp : bestHitters) {
-                gamePlayer.getPlayer().sendMessage("§6#" + i + " §f- §a" + gp.getPlayer().getName() + " §f- §b" + gp.getTotalHits() + " hits");
+            if (!gamePlayer.isSpectator()) {
+                PlayerUtils.cleanPlayer(gamePlayer.getPlayer(), GameMode.ADVENTURE);
+                gamePlayer.getPlayer().setAllowFlight(true);
+                gamePlayer.getPlayer().setFlying(true);
+                TeamFight.getInstance().getTitle().sendTitle(gamePlayer.getPlayer(), 20, 60, 20,
+                        gamePlayer.getTeam().getName().equals(winnerTeam.getName()) ? "§6§lVictoire" : "§cDéfaite", gamePlayer.getTeam().getName().equals(winnerTeam.getName()) ? "§eBien joué !" : "§fVictoire de l'équipe " + winnerTeam.getFormattedTeamName());
+                gamePlayer.getPlayer().sendMessage("§7§m--------------------------------------");
+                gamePlayer.getPlayer().sendMessage("§fL'équipe' " + winnerTeam.getFormattedTeamName() + "§fa gagné la partie !");
+                gamePlayer.getPlayer().sendMessage("§fTu as infligé au total §b" + gamePlayer.getTotalHits() + " hits §fdurant la partie.");
+                gamePlayer.getPlayer().sendMessage("");
+                List<GamePlayer> bestHitters = new ArrayList<>(this.players.values());
+                bestHitters.sort(Comparator.comparingInt(GamePlayer::getTotalHits).reversed());
+                int i = 1;
+                for (GamePlayer gp : bestHitters) {
+                    gamePlayer.getPlayer().sendMessage("§6#" + i + " §f- §a" + gp.getPlayer().getName() + " §f- §b" + gp.getTotalHits() + " hits");
+                    i++;
+                }
+                gamePlayer.getPlayer().sendMessage("");
+                gamePlayer.getPlayer().sendMessage("§cFermeture du serveur dans 15 secondes.");
+                gamePlayer.getPlayer().sendMessage("§7§m--------------------------------------");
             }
-            gamePlayer.getPlayer().sendMessage("");
-            gamePlayer.getPlayer().sendMessage("§cFermeture du serveur dans 15 secondes.");
-            gamePlayer.getPlayer().sendMessage("§7§m--------------------------------------------------------");
         }
 
         //Shutdown
         Bukkit.getScheduler().runTaskLater(TeamFight.getInstance(), () -> {
             for (Player player : Bukkit.getOnlinePlayers()) {
-                player.kickPlayer(TeamFight.PREFIX + "§cFin de la partie. Fermeture du serveur");
+                player.kickPlayer(TeamFight.PREFIX + "§cFin de la partie. Fermeture du serveur...");
             }
 
             shutdown();

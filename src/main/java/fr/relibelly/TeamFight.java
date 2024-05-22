@@ -2,6 +2,7 @@ package fr.relibelly;
 
 import fr.relibelly.game.Game;
 import fr.relibelly.game.listeners.manager.Register;
+import fr.relibelly.game.moving.MoveRunnable;
 import fr.relibelly.utils.Title;
 import fr.relibelly.utils.scoreboard.ScoreboardManager;
 import lombok.Getter;
@@ -43,6 +44,7 @@ public final class TeamFight extends JavaPlugin {
 
         if (!game.getLocations().isEmpty()) {
             new Register().registerListener();
+            new MoveRunnable().runTaskTimer(this, 0L, 5L);
 
             this.scheduledExecutorService = Executors.newScheduledThreadPool(16);
             this.executorMonoThread = Executors.newScheduledThreadPool(1);
