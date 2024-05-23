@@ -3,6 +3,7 @@ package fr.relibelly.game;
 import fr.relibelly.TeamFight;
 import fr.relibelly.game.locations.Locations;
 import fr.relibelly.game.player.GamePlayer;
+import fr.relibelly.game.player.scoreboard.PersonalScoreboard;
 import fr.relibelly.game.tasks.RoundTask;
 import fr.relibelly.game.tasks.GameTimerTask;
 import fr.relibelly.game.teams.Team;
@@ -13,6 +14,7 @@ import org.bukkit.*;
 import org.bukkit.entity.Player;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -76,6 +78,18 @@ public class Game {
                 }
             }
         }
+    }
+
+    public HashMap<UUID, GamePlayer> getSpectatorPlayers() {
+        return this.getPlayers().values().stream()
+                .filter(GamePlayer::isSpectator)
+                .collect(Collectors.toMap(gp -> gp.getPlayer().getUniqueId(), gp -> gp, (a, b) -> a, HashMap::new));
+    }
+
+    public HashMap<UUID, GamePlayer> getPlayingPlayers() {
+        return this.getPlayers().values().stream()
+                .filter(gp -> !gp.isSpectator())
+                .collect(Collectors.toMap(gp -> gp.getPlayer().getUniqueId(), gp -> gp, (a, b) -> a, HashMap::new));
     }
 
 

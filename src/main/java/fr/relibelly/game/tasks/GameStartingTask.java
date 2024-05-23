@@ -24,7 +24,7 @@ public class GameStartingTask extends BukkitRunnable {
             return;
         }
 
-        if (game.getPlayers().size() < TeamFight.getInstance().getMaxPerTeam() * 2) {
+        if (game.getPlayingPlayers().size() < TeamFight.getInstance().getMaxPerTeam() * 2) {
             for (GamePlayer gamePlayer : game.getPlayers().values()) {
                 gamePlayer.getPlayer().sendMessage(TeamFight.PREFIX + "§cDébut annulé, un joueur à quitté.");
             }

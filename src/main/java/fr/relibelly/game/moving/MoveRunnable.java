@@ -12,8 +12,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public class MoveRunnable extends BukkitRunnable {
 
-    private Game game = TeamFight.getInstance().getGame();
-    private double SPECTATOR_RADIUS = 100;
+    private final Game game = TeamFight.getInstance().getGame();
+    private final double SPECTATOR_RADIUS = 100;
 
     @Override
     public void run() {
