@@ -76,7 +76,7 @@ public class GamePlayer {
     public static void join(Player player) {
         Game g = TeamFight.getInstance().getGame();
         GamePlayer gamePlayer = new GamePlayer(player);
-        gamePlayer.setGame(g);
+        gamePlayer.setGame(g); 
         g.getPlayers().put(player.getUniqueId(), gamePlayer);
         if (g.getGameTypes() == GameTypes.WAITING && g.getPlayers().size() <= 2 * TeamFight.getInstance().getMaxPerTeam()) {
             player.teleport(g.getLocations().getSpawn());

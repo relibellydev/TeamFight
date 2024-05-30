@@ -96,7 +96,7 @@ public class PlayerListener implements Listener {
     public void onInventoryClick(InventoryClickEvent event) {
         Player player = (Player) event.getWhoClicked();
         GamePlayer gamePlayer = game.getGamePlayerByPlayer(player);
-        if (event.getAction() == null && event.getCurrentItem() == null) return;
+        if (event.getAction() == null || event.getCurrentItem() == null) return;
         if (event.getCurrentItem().getItemMeta().getDisplayName() == null) return;
 
         if (event.getClickedInventory().getName().equals("Choisir une équipe")) {
